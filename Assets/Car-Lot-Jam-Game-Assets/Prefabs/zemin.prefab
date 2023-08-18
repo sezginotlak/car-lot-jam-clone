@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1307555099730430632}
   - component: {fileID: 2705121836011734285}
   - component: {fileID: 175203552257454535}
-  - component: {fileID: -9085136229372060995}
+  - component: {fileID: -8611399984416582627}
   m_Layer: 0
   m_Name: zemin
   m_TagString: Untagged
@@ -85,7 +85,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-9085136229372060995
+--- !u!114 &-8611399984416582627
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,3 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e593022219d19648a513f575cbb9eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBlocked: 0
+  neighbourCells: []
+  connectedTo: {fileID: 0}

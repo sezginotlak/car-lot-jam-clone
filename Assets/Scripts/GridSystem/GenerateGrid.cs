@@ -1,7 +1,9 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static UnityEditor.FilePathAttribute;
 
 public class GenerateGrid : MonoBehaviour
 {
@@ -13,14 +15,43 @@ public class GenerateGrid : MonoBehaviour
     [Tooltip("Vertical grid count can be between 1 and 5.")]
     public int verticalGridCount = 5;
 
-    public GameObject gridCell;
+    public GridCell gridCell;
+    public Dictionary<Vector2Int, GridCell> generatedCellDictionary = new Dictionary<Vector2Int, GridCell>();
     public CinemachineTargetGroup targetGroup;
 
     private const float CELL_GAP = 1.75f;
 
+    private void Start()
+    {
+        int childCount = transform.childCount;
+        int j = -1;
+
+        for(int i = 0; i < childCount; i++)
+        {
+            if (i % horizontalGridCount == 0)
+                j++;
+
+            GridCell cell = transform.GetChild(i).GetComponent<GridCell>();
+            cell.Location = new Vector2Int(j, i % horizontalGridCount);
+
+            generatedCellDictionary.Add(cell.Location, cell);
+        }
+    }
+
     public void GenerateGrids(int verticalCount, int horizontalCount)
     {
         targetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
+        generatedCellDictionary.Clear();
+
+        if(transform.childCount > 0)
+        {
+            int count = transform.childCount;
+
+            for(int i = 0; i < count; i++)
+            {
+                DestroyImmediate(transform.GetChild(0).gameObject);
+            }
+        }
 
         for(int i = 0; i < verticalCount; i++)
         {
@@ -30,7 +61,9 @@ public class GenerateGrid : MonoBehaviour
                 float horizontalPosition = transform.position.x + j * CELL_GAP;
                 Vector3 gridCellPosition = new Vector3(horizontalPosition, transform.position.y, verticalPosition);
 
-                GameObject cell = Instantiate(gridCell, gridCellPosition, Quaternion.identity, transform);
+                GridCell cell = Instantiate(gridCell, gridCellPosition, Quaternion.identity, transform);
+                //cell.Location = new Vector2Int(i, j);
+                //generatedCellDictionary.Add(cell.Location, cell);
                 targetGroup.AddMember(cell.transform, 1, 1);
             }
         }

@@ -15,21 +15,20 @@ public class FindShortestPath : MonoBehaviour
             Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left
         };
 
-    [SerializeField] GridCell startCell;
-    [SerializeField] GridCell destinationCell;
+    GridCell startCell;
+    GridCell destinationCell;
     GridCell currentSearchingCell;
 
     bool isReachedDestination;
 
+    public GridCell StartCell { get => startCell; set => startCell = value; }
+    public GridCell DestinationCell { get => destinationCell; set => destinationCell = value; }
 
-    private void Update()
+    private void Start()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            SearchShortestPath();
-            BuildPath();
-        }
+        GameController.Instance.FindShortestPath = this;
     }
+
     void FindNeighbours(Dictionary<Vector2Int, GridCell> cellDictionary)
     {
         List<GridCell> neighbourList = new List<GridCell>();
@@ -57,21 +56,22 @@ public class FindShortestPath : MonoBehaviour
         }
     }
 
-    void SearchShortestPath()
+    public void SearchShortestPath()
     {
         bool isRunning = true;
         isReachedDestination = false;
         reachedCells.Clear();
+        frontier.Clear();
 
-        frontier.Enqueue(startCell);
-        reachedCells.Add(startCell.Location, startCell);
+        frontier.Enqueue(StartCell);
+        reachedCells.Add(StartCell.Location, StartCell);
 
         while(frontier.Count > 0 && isRunning)
         {
             currentSearchingCell = frontier.Dequeue();
             FindNeighbours(generateGrid.generatedCellDictionary);
 
-            if(currentSearchingCell.Location == destinationCell.Location)
+            if(currentSearchingCell.Location == DestinationCell.Location)
             {
                 isReachedDestination = true;
                 isRunning = false;
@@ -82,15 +82,11 @@ public class FindShortestPath : MonoBehaviour
     // SearchShortestPath'ten hemen sonra çaðrýlacak
     public List<GridCell> BuildPath()
     {
-
         if (!isReachedDestination)
-        {
-            Debug.Log("CAN'T REACH THE END");
             return null;
-        }
 
         List<GridCell> path = new List<GridCell>();
-        GridCell currentCell = destinationCell;
+        GridCell currentCell = DestinationCell;
 
         path.Add(currentCell);
 
@@ -101,11 +97,6 @@ public class FindShortestPath : MonoBehaviour
         }
 
         path.Reverse();
-
-        foreach (GridCell neighbour in path)
-        {
-            Debug.Log("Coordinates: " + neighbour.Location, neighbour.gameObject);
-        }
 
         return path;
     }

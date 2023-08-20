@@ -8,21 +8,28 @@ public class Driver : Object
 {
     private void OnMouseDown()
     {
-        GameController.Instance.CurrentDriver = this;
-        GameController.Instance.FindShortestPath.StartCell = currentOccupiedCell;
+        gameController.CurrentDriver = this;
+        gameController.FindShortestPath.StartCell = currentOccupiedCell;
     }
 
     private IEnumerator IEMoveToDestination()
     {
-        for(int i = 1; i < pathToDestination.Count; i++)
+        if (pathToDestination == null)
         {
-            Vector3 destination = pathToDestination[i].transform.position;
-            transform.DOMove(destination, 0.5f).SetEase(Ease.Linear);
-            yield return new WaitUntil(() => IsReachedDestination(destination));
-            pathToDestination[i].connectedTo = null;
+            GameController.Instance.OnCantReach();
         }
+        else
+        {
+            for (int i = 1; i < pathToDestination.Count; i++)
+            {
+                Vector3 destination = pathToDestination[i].transform.position;
+                transform.DOMove(destination, 0.3f).SetEase(Ease.Linear);
+                yield return new WaitUntil(() => IsReachedDestination(destination));
+                pathToDestination[i].connectedTo = null;
+            }
 
-        pathToDestination.Clear();
+            pathToDestination.Clear();
+        }
     }
 
     public void MoveToDestination()

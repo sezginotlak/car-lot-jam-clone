@@ -9,15 +9,22 @@ public class Object : MonoBehaviour
     public List<GridCell> pathToDestination = new List<GridCell>();
     public GridCell currentOccupiedCell;
     public LayerMask layerMask;
+    public int id;
+
+    internal GameController gameController;
 
     bool isOnEnable;
+
+    public virtual void Start()
+    {
+        gameController = GameController.Instance;    
+    }
 
     private IEnumerator MarkOccupiedCell(Collider other)
     {
         yield return new WaitForSeconds(0.2f);
         currentOccupiedCell = other.transform.GetComponent<GridCell>();
         currentOccupiedCell.IsBlocked = true;
-        Debug.Log("Coord: " + currentOccupiedCell.Location, currentOccupiedCell.gameObject);
         isOnEnable = true;
     }
 

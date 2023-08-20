@@ -532,7 +532,7 @@ GameObject:
   - component: {fileID: 4704087527845638061}
   - component: {fileID: 1450907307182502969}
   m_Layer: 0
-  m_Name: Stickman
+  m_Name: DriverBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

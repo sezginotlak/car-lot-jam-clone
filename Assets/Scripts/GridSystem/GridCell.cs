@@ -25,19 +25,13 @@ public class GridCell : MonoBehaviour
         if (IsBlocked)
         {
             // feedbackler
-            gameController.FindShortestPath.StartCell = null;
-            gameController.FindShortestPath.DestinationCell = null;
-            gameController.CurrentDriver = null;
+            gameController.OnCantReach();
         }
-        else
+        else if(gameController.CurrentDriver != null)
         {
-            gameController.CurrentDriver.currentOccupiedCell.IsBlocked = false;
-            gameController.CurrentDriver.currentOccupiedCell = this;
-            gameController.FindShortestPath.DestinationCell = this;
-            gameController.FindShortestPath.SearchShortestPath();
-            gameController.CurrentDriver.pathToDestination = gameController.FindShortestPath.BuildPath();
-            gameController.CurrentDriver.MoveToDestination();
-            IsBlocked = true;
+            // feedbackler
+            gameController.OnCanReach(this);
         }
+
     }
 }

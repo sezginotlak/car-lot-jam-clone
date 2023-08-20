@@ -19,4 +19,22 @@ public class GameController : MonoBehaviour
         else
             Destroy(gameObject);
     }
+
+    public void OnCanReach(GridCell cell)
+    {
+        CurrentDriver.currentOccupiedCell.IsBlocked = false;
+        CurrentDriver.currentOccupiedCell = cell;
+        FindShortestPath.DestinationCell = cell;
+        FindShortestPath.SearchShortestPath();
+        CurrentDriver.pathToDestination = FindShortestPath.BuildPath();
+        CurrentDriver.MoveToDestination();
+        cell.IsBlocked = true;
+    }
+
+    public void OnCantReach()
+    {
+        FindShortestPath.StartCell = null;
+        FindShortestPath.DestinationCell = null;
+        CurrentDriver = null;
+    }
 }

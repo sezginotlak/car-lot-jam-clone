@@ -17,11 +17,12 @@ public class GenerateGrid : MonoBehaviour
 
     public GridCell gridCell;
     public Dictionary<Vector2Int, GridCell> generatedCellDictionary = new Dictionary<Vector2Int, GridCell>();
+    public List<RoadCell> roadCellList = new List<RoadCell>();
     public CinemachineTargetGroup targetGroup;
 
     [Header("Road Prefabs")]
-    [SerializeField] GameObject leftTopCorner;
-    [SerializeField] GameObject otherCorners;
+    [SerializeField] GameObject exitCorner;
+    [SerializeField] GameObject corner;
     [SerializeField] GameObject straightRoad;
     [SerializeField] Transform roadParent;
 
@@ -31,10 +32,16 @@ public class GenerateGrid : MonoBehaviour
 
     private void Start()
     {
+        AdjustGridCells();
+        AdjustRoadCells();
+    }
+
+    private void AdjustGridCells()
+    {
         int childCount = transform.childCount;
         int j = -1;
 
-        for(int i = 0; i < childCount; i++)
+        for (int i = 0; i < childCount; i++)
         {
             if (i % horizontalGridCount == 0)
                 j++;
@@ -53,7 +60,7 @@ public class GenerateGrid : MonoBehaviour
         maxRoadID = (verticalCount * horizontalCount) + 3; // köþeler dahil yol sayýsý
 
         ClearParentObjects();
-
+        Dictionary<Vector2Int, GridCell> gridCellList = new Dictionary<Vector2Int, GridCell>();
         for (int i = 0; i < verticalCount; i++)
         {
             float verticalPosition = transform.position.z - i * CELL_GAP;
@@ -63,12 +70,18 @@ public class GenerateGrid : MonoBehaviour
                 Vector3 gridCellPosition = new Vector3(horizontalPosition, transform.position.y, verticalPosition);
 
                 GridCell cell = Instantiate(gridCell, gridCellPosition, Quaternion.identity, transform);
-                GenerateRoadConnectedToCell(cell, i, j);
-                //cell.Location = new Vector2Int(i, j);
+                //GenerateRoadConnectedToCell(cell, i, j);
+
+                // oluþturulacak yollar için kullanýlacak liste
+                cell.Location = new Vector2Int(i, j);
+                gridCellList.Add(cell.Location, cell);
+
                 //generatedCellDictionary.Add(cell.Location, cell);
                 targetGroup.AddMember(cell.transform, 1, 1);
             }
         }
+
+        GenerateRoads(gridCellList);
     }
 
     public void ClearParentObjects()
@@ -94,74 +107,89 @@ public class GenerateGrid : MonoBehaviour
         }
     }
 
-    public void GenerateRoadConnectedToCell(GridCell cell, int cellVertical, int cellHorizontal)
+    public void GenerateRoads(Dictionary<Vector2Int, GridCell> gridCellList)
     {
-        Vector3 cellPosition = cell.transform.position;
-        // if its left top corner
-        if(cellVertical == 0 && cellHorizontal == 0)
+        //top
+        for(int i = 0; i < horizontalGridCount; i++)
         {
-            Vector3 roadPosition = new Vector3(cellPosition.x - CELL_GAP, cellPosition.y, cellPosition.z + CELL_GAP);
-            Transform roadTransform = Instantiate(leftTopCorner, roadPosition, Quaternion.identity, roadParent).transform;
+            Vector2Int cellLocation = new Vector2Int(0, i);
+            GridCell cell = gridCellList[cellLocation];
+            Vector3 cellPosition = cell.transform.position;
 
-            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = 0;
-            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = maxRoadID - 1;
-            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = maxRoadID;
-        }
-        // if its right top corner
-        else if(cellVertical == 0 && cellHorizontal == horizontalGridCount - 1) 
-        {
-            Vector3 roadPosition = new Vector3(cellPosition.x + CELL_GAP, cellPosition.y, cellPosition.z + CELL_GAP);
-            Transform roadTransform = Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent).transform;
-
-            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = horizontalGridCount - 1;
-            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = horizontalGridCount;
-            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = horizontalGridCount + 1;
-        }
-        // if its left bottom corner
-        else if (cellVertical == verticalGridCount - 1 && cellHorizontal == 0)
-        {
-            Vector3 roadPosition = new Vector3(cellPosition.x - CELL_GAP, cellPosition.y, cellPosition.z - CELL_GAP);
-            Transform roadTransform = Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, -90f, 0)), roadParent).transform;
-
-            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = verticalGridCount + 2;
-            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = verticalGridCount + 1;
-            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = verticalGridCount;
-        }
-        // if its right bottom corner
-        else if (cellVertical == verticalGridCount - 1 && cellHorizontal == horizontalGridCount - 1)
-        {
-            Vector3 roadPosition = new Vector3(cellPosition.x + CELL_GAP, cellPosition.y, cellPosition.z - CELL_GAP);
-            Transform roadTransform = Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, 180f, 0)), roadParent).transform;
-
-            int startCount = horizontalGridCount + verticalGridCount;
-
-            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = startCount;
-            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = startCount + 1;
-            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = startCount + 2;
-        }
-        // if its left side
-        else if (cellVertical != 0 && cellVertical != verticalGridCount - 1 && cellHorizontal == 0)
-        {
-            Vector3 roadPosition = new Vector3(cellPosition.x - CELL_GAP, cellPosition.y, cellPosition.z);
-            Transform roadTransform = Instantiate(straightRoad, roadPosition, Quaternion.identity, roadParent).transform;
-        }
-        // if its right side
-        else if (cellVertical != 0 && cellVertical != verticalGridCount - 1 && cellHorizontal == horizontalGridCount - 1)
-        {
-            Vector3 roadPosition = new Vector3(cellPosition.x + CELL_GAP, cellPosition.y, cellPosition.z);
-            Instantiate(straightRoad, roadPosition, Quaternion.identity, roadParent);
-        }
-        // if its top
-        else if (cellVertical == 0 && cellHorizontal != 0 && cellHorizontal != horizontalGridCount - 1)
-        {
             Vector3 roadPosition = new Vector3(cellPosition.x, cellPosition.y, cellPosition.z + CELL_GAP);
             Instantiate(straightRoad, roadPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent);
+
+            if (i == horizontalGridCount - 1)
+            {
+                Vector3 cornerPosition = roadPosition;
+                cornerPosition.x += CELL_GAP;
+                Instantiate(corner, cornerPosition, Quaternion.Euler(new Vector3(0, 90, 0)), roadParent);
+            }
         }
-        // if its bottom
-        else if (cellVertical == verticalGridCount - 1 && cellHorizontal != 0 && cellHorizontal != horizontalGridCount - 1)
+
+        //right
+        for (int i = 0; i < verticalGridCount; i++)
         {
+            Vector2Int cellLocation = new Vector2Int(i, horizontalGridCount - 1);
+            GridCell cell = gridCellList[cellLocation];
+            Vector3 cellPosition = cell.transform.position;
+
+            Vector3 roadPosition = new Vector3(cellPosition.x + CELL_GAP, cellPosition.y, cellPosition.z);
+            Instantiate(straightRoad, roadPosition, Quaternion.identity, roadParent);
+
+            if (i == verticalGridCount - 1)
+            {
+                Vector3 cornerPosition = roadPosition;
+                cornerPosition.z -= CELL_GAP;
+                Instantiate(corner, cornerPosition, Quaternion.Euler(new Vector3(0, -180, 0)), roadParent);
+            }
+        }
+
+        //bottom
+        for (int i = horizontalGridCount - 1; i >= 0; i--)
+        {
+            Vector2Int cellLocation = new Vector2Int(verticalGridCount - 1, i);
+            GridCell cell = gridCellList[cellLocation];
+            Vector3 cellPosition = cell.transform.position;
+
             Vector3 roadPosition = new Vector3(cellPosition.x, cellPosition.y, cellPosition.z - CELL_GAP);
             Instantiate(straightRoad, roadPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent);
+
+            if (i == 0)
+            {
+                Vector3 cornerPosition = roadPosition;
+                cornerPosition.x -= CELL_GAP;
+                Instantiate(corner, cornerPosition, Quaternion.Euler(new Vector3(0, -90f, 0)), roadParent);
+            }
+        }
+
+        //left
+        for (int i = verticalGridCount - 1; i >= 0; i--)
+        {
+            Vector2Int cellLocation = new Vector2Int(i, 0);
+            GridCell cell = gridCellList[cellLocation];
+            Vector3 cellPosition = cell.transform.position;
+
+            Vector3 roadPosition = new Vector3(cellPosition.x - CELL_GAP, cellPosition.y, cellPosition.z);
+            Instantiate(straightRoad, roadPosition, Quaternion.identity, roadParent);
+
+            if (i == 0)
+            {
+                Vector3 cornerPosition = roadPosition;
+                cornerPosition.z += CELL_GAP;
+                Instantiate(exitCorner, cornerPosition, Quaternion.Euler(new Vector3(0, 0, 0)), roadParent);
+            }
+        }
+    }
+
+    void AdjustRoadCells()
+    {
+        roadCellList = roadParent.GetComponentsInChildren<RoadCell>().ToList();
+        int id = 0;
+        foreach (RoadCell cell in roadCellList)
+        {
+            cell.roadId = id;
+            id++;
         }
     }
 }

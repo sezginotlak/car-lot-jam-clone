@@ -27,6 +27,8 @@ public class GenerateGrid : MonoBehaviour
 
     private const float CELL_GAP = 1.75f;
 
+    int maxRoadID = 0;
+
     private void Start()
     {
         int childCount = transform.childCount;
@@ -48,6 +50,7 @@ public class GenerateGrid : MonoBehaviour
     {
         targetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
         generatedCellDictionary.Clear();
+        maxRoadID = (verticalCount * horizontalCount) + 3; // köþeler dahil yol sayýsý
 
         ClearParentObjects();
 
@@ -98,31 +101,49 @@ public class GenerateGrid : MonoBehaviour
         if(cellVertical == 0 && cellHorizontal == 0)
         {
             Vector3 roadPosition = new Vector3(cellPosition.x - CELL_GAP, cellPosition.y, cellPosition.z + CELL_GAP);
-            Instantiate(leftTopCorner, roadPosition, Quaternion.identity, roadParent);
+            Transform roadTransform = Instantiate(leftTopCorner, roadPosition, Quaternion.identity, roadParent).transform;
+
+            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = 0;
+            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = maxRoadID - 1;
+            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = maxRoadID;
         }
         // if its right top corner
         else if(cellVertical == 0 && cellHorizontal == horizontalGridCount - 1) 
         {
             Vector3 roadPosition = new Vector3(cellPosition.x + CELL_GAP, cellPosition.y, cellPosition.z + CELL_GAP);
-            Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent);
+            Transform roadTransform = Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent).transform;
+
+            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = horizontalGridCount - 1;
+            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = horizontalGridCount;
+            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = horizontalGridCount + 1;
         }
         // if its left bottom corner
         else if (cellVertical == verticalGridCount - 1 && cellHorizontal == 0)
         {
             Vector3 roadPosition = new Vector3(cellPosition.x - CELL_GAP, cellPosition.y, cellPosition.z - CELL_GAP);
-            Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, -90f, 0)), roadParent);
+            Transform roadTransform = Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, -90f, 0)), roadParent).transform;
+
+            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = verticalGridCount + 2;
+            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = verticalGridCount + 1;
+            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = verticalGridCount;
         }
         // if its right bottom corner
         else if (cellVertical == verticalGridCount - 1 && cellHorizontal == horizontalGridCount - 1)
         {
             Vector3 roadPosition = new Vector3(cellPosition.x + CELL_GAP, cellPosition.y, cellPosition.z - CELL_GAP);
-            Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, 180f, 0)), roadParent);
+            Transform roadTransform = Instantiate(otherCorners, roadPosition, Quaternion.Euler(new Vector3(0, 180f, 0)), roadParent).transform;
+
+            int startCount = horizontalGridCount + verticalGridCount;
+
+            roadTransform.GetChild(0).GetComponent<RoadCell>().roadId = startCount;
+            roadTransform.GetChild(1).GetComponent<RoadCell>().roadId = startCount + 1;
+            roadTransform.GetChild(2).GetComponent<RoadCell>().roadId = startCount + 2;
         }
         // if its left side
         else if (cellVertical != 0 && cellVertical != verticalGridCount - 1 && cellHorizontal == 0)
         {
             Vector3 roadPosition = new Vector3(cellPosition.x - CELL_GAP, cellPosition.y, cellPosition.z);
-            Instantiate(straightRoad, roadPosition, Quaternion.identity, roadParent);
+            Transform roadTransform = Instantiate(straightRoad, roadPosition, Quaternion.identity, roadParent).transform;
         }
         // if its right side
         else if (cellVertical != 0 && cellVertical != verticalGridCount - 1 && cellHorizontal == horizontalGridCount - 1)

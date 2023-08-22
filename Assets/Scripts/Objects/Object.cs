@@ -8,7 +8,7 @@ public class Object : MonoBehaviour
 {
     public List<GridCell> pathToDestination = new List<GridCell>();
     public GridCell currentOccupiedCell;
-    public LayerMask layerMask;
+    public LayerMask layerMaskForStart;
     public int id;
 
     internal GameController gameController;
@@ -20,6 +20,7 @@ public class Object : MonoBehaviour
         gameController = GameController.Instance;    
     }
 
+    // Oyun baþlangýcýnda hangi hücrelerin dolu olduðunu belirtmek için kullanýlýyor
     private IEnumerator MarkOccupiedCell(Collider other)
     {
         yield return new WaitForSeconds(0.2f);

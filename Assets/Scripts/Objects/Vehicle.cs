@@ -6,6 +6,8 @@ using UnityEngine;
 public class Vehicle : Object
 {
     public List<Transform> raycastPoints = new List<Transform>();
+    public Transform overlapBoxPoint;
+    public LayerMask layerMaskForBlocks;
     List<GridCell> availableCells = new List<GridCell>(); //arabaya binilebilecek hücreleri belirlemek için
 
     public override void Start()
@@ -24,7 +26,7 @@ public class Vehicle : Object
     GridCell StartRaycast(Transform point)
     {
         RaycastHit hit;
-        if(Physics.Raycast(point.position, -Vector3.up, out hit, Mathf.Infinity, layerMask))
+        if(Physics.Raycast(point.position, -Vector3.up, out hit, Mathf.Infinity, layerMaskForStart))
         {
             return hit.transform.GetComponent<GridCell>();
         }
@@ -32,8 +34,36 @@ public class Vehicle : Object
         return null;
     }
 
+    IEnumerator WaitUntilHavePath()
+    {
+        yield return new WaitUntil(() => HasPathToLeave());
+    }
+
+    bool HasPathToLeave()
+    {
+        RaycastHit hit, hit1;
+        if (Physics.Raycast(overlapBoxPoint.position, transform.forward, out hit, Mathf.Infinity, layerMaskForBlocks))
+            { Debug.Log("False"); }
+        else
+        {
+            Debug.Log("True");
+            return true;
+        }
+
+        if (Physics.Raycast(overlapBoxPoint.position, -transform.forward, out hit1, Mathf.Infinity, layerMaskForBlocks))
+            { Debug.Log("False"); }
+        else
+        {
+            Debug.Log("True");
+            return true;
+        }
+
+        return false;
+    }
+
     private void OnMouseDown()
     {
+        StartCoroutine(WaitUntilHavePath());
         if (gameController.CurrentDriver == null) return;
 
         if(gameController.CurrentDriver.id != id)

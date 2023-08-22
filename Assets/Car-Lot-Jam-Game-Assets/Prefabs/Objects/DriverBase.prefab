@@ -531,7 +531,7 @@ GameObject:
   - component: {fileID: 3746103124607938116}
   - component: {fileID: 4704087527845638061}
   - component: {fileID: 1450907307182502969}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DriverBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -581,11 +581,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bda621c35e4c4c49b46b519c6489308, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pathToDestination: []
   currentOccupiedCell: {fileID: 0}
-  raycastPoint: {fileID: 0}
-  layerMask:
+  layerMaskForStart:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
+  id: 0
 --- !u!1 &4283887588008073125
 GameObject:
   m_ObjectHideFlags: 0

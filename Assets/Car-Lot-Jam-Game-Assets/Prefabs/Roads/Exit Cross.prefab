@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6363963380891242481}
   - component: {fileID: 9202439207053507387}
   - component: {fileID: 4764820344217976289}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Exit Cross
   m_TagString: Untagged
   m_Icon: {fileID: 0}

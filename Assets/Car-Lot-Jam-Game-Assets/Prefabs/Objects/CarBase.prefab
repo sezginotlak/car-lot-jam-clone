@@ -183,6 +183,9 @@ MonoBehaviour:
   layerMaskForBlocks:
     serializedVersion: 2
     m_Bits: 64
+  layerMaskForRoad:
+    serializedVersion: 2
+    m_Bits: 192
 --- !u!65 &3623607096885297319
 BoxCollider:
   m_ObjectHideFlags: 0

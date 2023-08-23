@@ -22,6 +22,7 @@ public class GenerateGrid : MonoBehaviour
 
     [Header("Road Prefabs")]
     [SerializeField] GameObject exitCorner;
+    [SerializeField] GameObject exitRoad;
     [SerializeField] GameObject corner;
     [SerializeField] GameObject straightRoad;
     [SerializeField] Transform roadParent;
@@ -51,6 +52,8 @@ public class GenerateGrid : MonoBehaviour
 
             generatedCellDictionary.Add(cell.Location, cell);
         }
+
+        CameraManager.Instance.ChangeCamera(verticalGridCount);
     }
 
     public void GenerateGrids(int verticalCount, int horizontalCount)
@@ -77,7 +80,7 @@ public class GenerateGrid : MonoBehaviour
                 gridCellList.Add(cell.Location, cell);
 
                 //generatedCellDictionary.Add(cell.Location, cell);
-                targetGroup.AddMember(cell.transform, 1, 1);
+                targetGroup.AddMember(cell.transform, 1, 1.75f);
             }
         }
 
@@ -117,13 +120,13 @@ public class GenerateGrid : MonoBehaviour
             Vector3 cellPosition = cell.transform.position;
 
             Vector3 roadPosition = new Vector3(cellPosition.x, cellPosition.y, cellPosition.z + CELL_GAP);
-            Instantiate(straightRoad, roadPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent);
+            Instantiate(straightRoad, roadPosition, Quaternion.Euler(new Vector3(0, 270f, 0)), roadParent);
 
             if (i == horizontalGridCount - 1)
             {
                 Vector3 cornerPosition = roadPosition;
                 cornerPosition.x += CELL_GAP;
-                Instantiate(corner, cornerPosition, Quaternion.Euler(new Vector3(0, 90, 0)), roadParent);
+                Instantiate(corner, cornerPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent);
             }
         }
 
@@ -153,7 +156,7 @@ public class GenerateGrid : MonoBehaviour
             Vector3 cellPosition = cell.transform.position;
 
             Vector3 roadPosition = new Vector3(cellPosition.x, cellPosition.y, cellPosition.z - CELL_GAP);
-            Instantiate(straightRoad, roadPosition, Quaternion.Euler(new Vector3(0, 90f, 0)), roadParent);
+            Instantiate(straightRoad, roadPosition, Quaternion.Euler(new Vector3(0, 270f, 0)), roadParent);
 
             if (i == 0)
             {
@@ -178,6 +181,7 @@ public class GenerateGrid : MonoBehaviour
                 Vector3 cornerPosition = roadPosition;
                 cornerPosition.z += CELL_GAP;
                 Instantiate(exitCorner, cornerPosition, Quaternion.Euler(new Vector3(0, 0, 0)), roadParent);
+                Instantiate(exitRoad, cornerPosition, Quaternion.Euler(new Vector3(0, 0, 0)), roadParent);
             }
         }
     }

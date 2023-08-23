@@ -9,7 +9,7 @@ public class Driver : Object
     private void OnMouseDown()
     {
         gameController.CurrentDriver = this;
-        gameController.FindShortestPath.StartCell = currentOccupiedCell;
+        findShortestPath.StartCell = currentOccupiedCell;
     }
 
     private IEnumerator IEMoveToDestination()

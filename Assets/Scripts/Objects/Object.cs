@@ -12,12 +12,21 @@ public class Object : MonoBehaviour
     public int id;
 
     internal GameController gameController;
+    internal FindShortestPath findShortestPath;
+    internal GenerateGrid generateGrid;
 
     bool isOnEnable;
 
     public virtual void Start()
     {
-        gameController = GameController.Instance;    
+        Invoke(nameof(AssignScripts), 0.2f);
+    }
+
+    private void AssignScripts()
+    {
+        gameController = GameController.Instance;
+        findShortestPath = gameController.FindShortestPath;
+        generateGrid = findShortestPath.generateGrid;
     }
 
     // Oyun baþlangýcýnda hangi hücrelerin dolu olduðunu belirtmek için kullanýlýyor

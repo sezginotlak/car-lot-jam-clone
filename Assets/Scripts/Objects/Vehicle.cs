@@ -8,6 +8,7 @@ public class Vehicle : Object
     public List<Transform> raycastPoints = new List<Transform>();
     public Transform overlapBoxPoint;
     public LayerMask layerMaskForBlocks;
+    public LayerMask layerMaskForRoad;
     List<GridCell> availableCells = new List<GridCell>(); //arabaya binilebilecek hücreleri belirlemek için
 
     public override void Start()
@@ -34,9 +35,77 @@ public class Vehicle : Object
         return null;
     }
 
-    IEnumerator WaitUntilHavePath()
+    IEnumerator LeaveArea()
     {
         yield return new WaitUntil(() => HasPathToLeave());
+        List<RoadCell> path = DecidePath();
+        MoveToDestination(path);
+    }
+
+    List<RoadCell> DecidePath()
+    {
+        RaycastHit hit, hit1;
+        RoadCell roadCell = null, roadCell1 = null;
+        if (Physics.Raycast(overlapBoxPoint.position, transform.forward, out hit, Mathf.Infinity, layerMaskForRoad))
+        { 
+            if(hit.transform.TryGetComponent(out roadCell))
+            {
+                roadCell = hit.transform.GetComponent<RoadCell>();
+            }
+        }
+
+        if (Physics.Raycast(overlapBoxPoint.position, -transform.forward, out hit1, Mathf.Infinity, layerMaskForRoad))
+        {
+            if (hit1.transform.TryGetComponent(out roadCell1))
+            {
+                roadCell1 = hit1.transform.GetComponent<RoadCell>();
+            }
+        }
+
+        return MakePath(FindTheNearestRoadToExit(roadCell, roadCell1), generateGrid.roadCellList);
+    }
+
+    RoadCell FindTheNearestRoadToExit(RoadCell cell, RoadCell cell1) 
+    {
+        RoadCell result = null;
+        if(cell == null)
+        {
+            Debug.Log(cell1.name, cell1.gameObject);
+            return cell1;
+        } 
+
+        if (cell1 == null)
+        {
+            Debug.Log(cell.name, cell.gameObject);
+            return cell;
+        }
+
+        if (Vector3.Distance(transform.position, cell.transform.position) <= Vector3.Distance(transform.position, cell1.transform.position))
+            return cell;
+        else
+            return cell1;
+    }
+
+    List<RoadCell> MakePath(RoadCell cell, List<RoadCell> roadCellList)
+    {
+        int maxRoadCount = generateGrid.roadCellList.Count;
+        int cellIndex = generateGrid.roadCellList.IndexOf(cell);
+        int midIndex = (maxRoadCount / 2) - 1;
+        List<RoadCell> path = new List<RoadCell>();
+        if(cellIndex <= midIndex)
+        {
+            for(int i = cellIndex; i >= 0; i--)
+                path.Add(roadCellList[i]);
+
+            path.Add(roadCellList[^1]);
+        }
+        else
+        {
+            for (int i = cellIndex; i < maxRoadCount; i++)
+                path.Add(roadCellList[i]);
+        }
+
+        return path;
     }
 
     bool HasPathToLeave()
@@ -63,7 +132,7 @@ public class Vehicle : Object
 
     private void OnMouseDown()
     {
-        StartCoroutine(WaitUntilHavePath());
+        StartCoroutine(LeaveArea());
         if (gameController.CurrentDriver == null) return;
 
         if(gameController.CurrentDriver.id != id)
@@ -121,14 +190,34 @@ public class Vehicle : Object
         return result;
     }
 
-    private IEnumerator IEMoveToDestination()
+    private IEnumerator IEMoveToDestination(List<RoadCell> path)
     {
-        yield return new WaitForEndOfFrame();
+        for (int i = 0; i < path.Count; i++)
+        {
+            Vector3 destination;
+            if (i > 0)
+            {
+                Vector3 fwRotation = path[i].transform.position - transform.position;
+                //transform.DORotate(fwRotation, 0.1f);
+                transform.DOLookAt(path[i].transform.position, 0.1f);
+
+                destination = path[i].transform.position;
+                transform.DOMove(destination, 0.15f).SetEase(Ease.Linear);
+            }
+            else
+            {
+                destination = path[i].transform.position;
+                transform.DOMove(destination, 0.3f).SetEase(Ease.Linear);
+            }
+            yield return new WaitUntil(() => IsReachedDestination(destination));
+        }
+
+        transform.DOMove(transform.position + Vector3.forward * 30f, 3f).SetEase(Ease.Linear);
     }
 
-    public void MoveToDestination()
+    public void MoveToDestination(List<RoadCell> path)
     {
-        StartCoroutine(IEMoveToDestination());
+        StartCoroutine(IEMoveToDestination(path));
     }
 
     private bool IsReachedDestination(Vector3 destination)

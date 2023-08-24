@@ -6,6 +6,7 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     public CinemachineVirtualCamera perspectiveCamera, ortographicCamera;
+    public CinemachineTargetGroup targetGroup;
 
     public static CameraManager Instance;
     private void Awake()

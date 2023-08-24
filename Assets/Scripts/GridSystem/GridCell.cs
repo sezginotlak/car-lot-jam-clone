@@ -1,6 +1,8 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GridCell : MonoBehaviour
 {
@@ -10,6 +12,8 @@ public class GridCell : MonoBehaviour
     GameController gameController;
     public List<GridCell> neighbourCells = new List<GridCell>();
     public GridCell connectedTo;
+    public MeshRenderer cellRenderer;
+    public Color startColor, redColor, greenColor;
 
     // PROPS
     public bool IsBlocked { get => isBlocked; set => isBlocked = value; }
@@ -18,6 +22,13 @@ public class GridCell : MonoBehaviour
     private void Start()
     {
         gameController = GameController.Instance;
+        startColor = cellRenderer.material.color;
+    }
+
+    public void SetColor(Color color)
+    {
+        Material cellMat = cellRenderer.material;
+        cellMat.DOColor(color, 0.5f).OnComplete(() => cellMat.DOColor(startColor, 0.5f));
     }
 
     private void OnMouseDown()
@@ -25,6 +36,7 @@ public class GridCell : MonoBehaviour
         if (IsBlocked)
         {
             // feedbackler
+            SetColor(redColor);
             gameController.OnCantReach();
         }
         else if(gameController.CurrentDriver != null)

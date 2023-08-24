@@ -49,7 +49,7 @@ public class GenerateGrid : MonoBehaviour
 
             GridCell cell = transform.GetChild(i).GetComponent<GridCell>();
             cell.Location = new Vector2Int(j, i % horizontalGridCount);
-
+            CameraManager.Instance.targetGroup.AddMember(cell.transform, 1, 1.75f);
             generatedCellDictionary.Add(cell.Location, cell);
         }
 

@@ -99,8 +99,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e593022219d19648a513f575cbb9eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBlocked: 0
   neighbourCells: []
   connectedTo: {fileID: 0}
+  cellRenderer: {fileID: 175203552257454535}
+  startColor: {r: 0, g: 0, b: 0, a: 0}
+  redColor: {r: 0.8, g: 0, b: 0, a: 1}
+  greenColor: {r: 0.1, g: 0.8, b: 0, a: 1}
 --- !u!65 &4135731811706396377
 BoxCollider:
   m_ObjectHideFlags: 0

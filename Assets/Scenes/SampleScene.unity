@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelList:
-  - {fileID: 6459483032275796166, guid: c2138f528fe912d44980c71ffb1c3d8c, type: 3}
+  - {fileID: 125588692875884815, guid: c2138f528fe912d44980c71ffb1c3d8c, type: 3}
   - {fileID: 168871673888170906, guid: 47e20a5e30f973544825f9bbf26b479a, type: 3}
   levelParent: {fileID: 861536198}
 --- !u!1 &125427547
@@ -2268,7 +2268,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1616696686}
-  m_LocalRotation: {x: 0.5257311, y: 0.000000017015815, z: -0.0000000011779744, w: 0.85065085}
+  m_LocalRotation: {x: 0.5257311, y: -0.000000021952893, z: 0.0000000135676315, w: 0.85065085}
   m_LocalPosition: {x: 3.5, y: 10, z: -10.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

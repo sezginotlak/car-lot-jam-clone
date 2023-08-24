@@ -18,7 +18,6 @@ public class GenerateGrid : MonoBehaviour
     public GridCell gridCell;
     public Dictionary<Vector2Int, GridCell> generatedCellDictionary = new Dictionary<Vector2Int, GridCell>();
     public List<RoadCell> roadCellList = new List<RoadCell>();
-    public CinemachineTargetGroup targetGroup;
 
     [Header("Road Prefabs")]
     [SerializeField] GameObject exitCorner;
@@ -58,7 +57,7 @@ public class GenerateGrid : MonoBehaviour
 
     public void GenerateGrids(int verticalCount, int horizontalCount)
     {
-        targetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
+        //targetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
         generatedCellDictionary.Clear();
         maxRoadID = (verticalCount * horizontalCount) + 3; // köþeler dahil yol sayýsý
 
@@ -80,7 +79,7 @@ public class GenerateGrid : MonoBehaviour
                 gridCellList.Add(cell.Location, cell);
 
                 //generatedCellDictionary.Add(cell.Location, cell);
-                targetGroup.AddMember(cell.transform, 1, 1.75f);
+                //targetGroup.AddMember(cell.transform, 1, 1.75f);
             }
         }
 

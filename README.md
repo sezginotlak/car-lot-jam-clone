@@ -1,0 +1,2 @@
+-Level içerisinde GridParent üstündeki scriptten istenilen grid boyutu girilip Generate Grid denildiğinde otomatik olarak yollar oluşmaktadır.
+-Yeni leveller prefab haline getirilip Level Manager içerisindeki listeye koyulmalıdır.

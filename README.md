@@ -1,2 +1,2 @@
--Level içerisinde GridParent üstündeki scriptten istenilen grid boyutu girilip Generate Grid denildiğinde otomatik olarak yollar oluşmaktadır.
--Yeni leveller prefab haline getirilip Level Manager içerisindeki listeye koyulmalıdır.
+..* When the desired grid size is entered from the script on GridParent in the Level and Generate Grid is clicked, the roads are automatically created.
+..* New levels should be prefab and placed in the list in the Level Manager.
